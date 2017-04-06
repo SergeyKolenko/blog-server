@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
+  before_action :authenticate_user!, only: [:index, :create, :update, :destroy]
   before_action :set_post, only: [:show, :update, :destroy]
+  before_action :is_current_user?, only: [:update, :destroy]
 
   # GET /posts
   def index
@@ -39,13 +41,19 @@ class PostsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_post
-      @post = Post.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_post
+    @post = Post.find(params[:id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def post_params
-      params.require(:post).permit(:title, :body, :user)
+  # Only allow a trusted parameter "white list" through.
+  def post_params
+    params.require(:post).permit(:title, :body, :user)
+  end
+
+  def is_current_user?
+    unless user_signed_in? && @post.user == current_user
+      render json: { errors: ['Permissions denied'] }, status: :forbidden
     end
+  end
 end
