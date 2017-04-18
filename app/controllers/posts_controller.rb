@@ -17,7 +17,7 @@ class PostsController < ApplicationController
 
   # POST /posts
   def create
-    @post = Post.new(post_params)
+    @post = Post.new(post_params.merge(user: current_user))
 
     if @post.save
       render json: @post, status: :created, location: @post
@@ -48,7 +48,7 @@ class PostsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def post_params
-    params.require(:post).permit(:title, :body, :user)
+    params.require(:post).permit(:title, :body)
   end
 
   def is_current_user?
