@@ -7,5 +7,5 @@ class User < ApplicationRecord
   has_many :posts
   has_many :comments
 
-  validates :nickname, uniqueness: true
+  validates :nickname, uniqueness: true, presence: true
 end
